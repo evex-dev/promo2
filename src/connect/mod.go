@@ -88,6 +88,8 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 
 	for _, game := range games {
 		for _, user := range game.Players {
+			fmt.Println("\x1b[34m[/] Fetching UUID: " + user.UUID + "\x1b[0m")
+
 			body, err := json.Marshal(RequestParms{
 				UserUUID:   user.UUID,
 				CampaignID: "4daf403e-66eb-11ef-96ab-ad0a069940ce",
@@ -98,7 +100,7 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 
 			req, err := http.NewRequest("POST", "https://www.chess.com/rpc/chesscom.partnership_offer_codes.v1.PartnershipOfferCodesService/RetrieveOfferCode", bytes.NewBuffer(body))
 			if err != nil {
-				return nil, fmt.Errorf("unknown Error")
+				continue
 			}
 
 			req.Header.Set("accept", "application/json, text/plain, */*")
@@ -117,7 +119,7 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 
 			resp, err = client.Do(req)
 			if err != nil {
-				return nil, fmt.Errorf("connection Error")
+				continue
 			}
 
 			if resp.Status == "200" {
@@ -136,6 +138,9 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 
 					promoUrls = append(promoUrls, content_data)
 				}
+			}else {
+				fmt.Println("\x1b[31m[-] Fetching Error: " + resp.Status + "\x1b[0m")
+				continue
 			}
 		}
 	}

@@ -72,6 +72,8 @@ func main() {
 			continue
 		}
 
+		fmt.Println("\x1b[32m[+] Found: ", len(promos), "urls\x1b[0m")
+
 		resultContent := strings.Join(promos, "\n")
 		resultFile, err := os.Open(resultPath)
 
