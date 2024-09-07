@@ -44,27 +44,25 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 		Transport: transport,
 	}
 
-	headers := http.Header{}
-	headers.Add("accept", "application/json, text/plain, */*")
-	headers.Add("accept-language", "ja,en-US;q=0.9,en;q=0.8")
-	headers.Add("cache-control", "no-cache")
-	headers.Add("content-type", "application/json")
-	headers.Add("pragma", "no-cache")
-	headers.Add("priority", "u=1, i")
-	headers.Add("sec-ch-ua", "\"Chromium\";v=\""+generateRandomIntString(200)+"\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"")
-	headers.Add("sec-ch-ua-mobile", "?0")
-	headers.Add("sec-ch-ua-platform", "\"Windows\"")
-	headers.Add("sec-fetch-dest", "empty")
-	headers.Add("sec-fetch-mode", "cors")
-	headers.Add("sec-fetch-site", "same-origin")
-	headers.Add("referrer", "https://www.chess.com/play/computer/discord-wumpus?utm_source=chesscom&utm_medium=homepagebanner&utm_campaign=discord2024")
-
 	setupReq, err := http.NewRequest("GET", "https://www.chess.com/service/gamelist/top?limit=50&from=" + generateRandomIntString(1040), nil)
+
+	setupReq.Header.Add("accept", "application/json, text/plain, */*")
+	setupReq.Header.Add("accept-language", "ja,en-US;q=0.9,en;q=0.8")
+	setupReq.Header.Add("cache-control", "no-cache")
+	setupReq.Header.Add("content-type", "application/json")
+	setupReq.Header.Add("pragma", "no-cache")
+	setupReq.Header.Add("priority", "u=1, i")
+	setupReq.Header.Add("sec-ch-ua", "\"Chromium\";v=\""+generateRandomIntString(200)+"\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"")
+	setupReq.Header.Add("sec-ch-ua-mobile", "?0")
+	setupReq.Header.Add("sec-ch-ua-platform", "\"Windows\"")
+	setupReq.Header.Add("sec-fetch-dest", "empty")
+	setupReq.Header.Add("sec-fetch-mode", "cors")
+	setupReq.Header.Add("sec-fetch-site", "same-origin")
+	setupReq.Header.Add("referrer", "https://www.chess.com/play/computer/discord-wumpus?utm_source=chesscom&utm_medium=homepagebanner&utm_campaign=discord2024")
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect setupReqURL")
 	}
-
-	setupReq.Header = headers
 
 	resp, err := client.Do(setupReq)
 	if err != nil {
@@ -102,7 +100,19 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 				return nil, fmt.Errorf("unknown Error")
 			}
 
-			req.Header = headers
+			req.Header.Add("accept", "application/json, text/plain, */*")
+			req.Header.Add("accept-language", "ja,en-US;q=0.9,en;q=0.8")
+			req.Header.Add("cache-control", "no-cache")
+			req.Header.Add("content-type", "application/json")
+			req.Header.Add("pragma", "no-cache")
+			req.Header.Add("priority", "u=1, i")
+			req.Header.Add("sec-ch-ua", "\"Chromium\";v=\""+generateRandomIntString(200)+"\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"")
+			req.Header.Add("sec-ch-ua-mobile", "?0")
+			req.Header.Add("sec-ch-ua-platform", "\"Windows\"")
+			req.Header.Add("sec-fetch-dest", "empty")
+			req.Header.Add("sec-fetch-mode", "cors")
+			req.Header.Add("sec-fetch-site", "same-origin")
+			req.Header.Add("referrer", "https://www.chess.com/play/computer/discord-wumpus?utm_source=chesscom&utm_medium=homepagebanner&utm_campaign=discord2024")
 
 			resp, err = client.Do(req)
 			if err != nil {
