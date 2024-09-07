@@ -61,7 +61,6 @@ func main() {
 
 	for {
 		oneGenerate := func() {
-			wg.Add(1)
 			fmt.Println("\x1b[33m[=] Requesting...\x1b[0m")
 
 			proxyUrl := ""
@@ -106,6 +105,7 @@ func main() {
 			wg.Done()
 		}
 
+		wg.Add(5)
 		go oneGenerate()
 		go oneGenerate()
 		go oneGenerate()
