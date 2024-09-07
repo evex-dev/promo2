@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -46,19 +47,19 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 
 	setupReq, err := http.NewRequest("GET", "https://www.chess.com/service/gamelist/top?limit=50&from=" + generateRandomIntString(1040), nil)
 
-	setupReq.Header.Add("accept", "application/json, text/plain, */*")
-	setupReq.Header.Add("accept-language", "ja,en-US;q=0.9,en;q=0.8")
-	setupReq.Header.Add("cache-control", "no-cache")
-	setupReq.Header.Add("content-type", "application/json")
-	setupReq.Header.Add("pragma", "no-cache")
-	setupReq.Header.Add("priority", "u=1, i")
-	setupReq.Header.Add("sec-ch-ua", "\"Chromium\";v=\""+generateRandomIntString(200)+"\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"")
-	setupReq.Header.Add("sec-ch-ua-mobile", "?0")
-	setupReq.Header.Add("sec-ch-ua-platform", "\"Windows\"")
-	setupReq.Header.Add("sec-fetch-dest", "empty")
-	setupReq.Header.Add("sec-fetch-mode", "cors")
-	setupReq.Header.Add("sec-fetch-site", "same-origin")
-	setupReq.Header.Add("referrer", "https://www.chess.com/play/computer/discord-wumpus?utm_source=chesscom&utm_medium=homepagebanner&utm_campaign=discord2024")
+	setupReq.Header.Set("accept", "application/json, text/plain, */*")
+	setupReq.Header.Set("accept-language", "ja,en-US;q=0.9,en;q=0.8")
+	setupReq.Header.Set("cache-control", "no-cache")
+	setupReq.Header.Set("content-type", "application/json")
+	setupReq.Header.Set("pragma", "no-cache")
+	setupReq.Header.Set("priority", "u=1, i")
+	setupReq.Header.Set("sec-ch-ua", "\"Chromium\";v=\""+generateRandomIntString(200)+"\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"")
+	setupReq.Header.Set("sec-ch-ua-mobile", "?0")
+	setupReq.Header.Set("sec-ch-ua-platform", "\"Windows\"")
+	setupReq.Header.Set("sec-fetch-dest", "empty")
+	setupReq.Header.Set("sec-fetch-mode", "cors")
+	setupReq.Header.Set("sec-fetch-site", "same-origin")
+	setupReq.Header.Set("referrer", "https://www.chess.com/play/computer/discord-wumpus?utm_source=chesscom&utm_medium=homepagebanner&utm_campaign=discord2024")
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect setupReqURL")
@@ -80,7 +81,7 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 
 	err = json.Unmarshal(payload, &games)
 	if err != nil {
-		return nil, fmt.Errorf("games unmarshal error")
+		return nil, fmt.Errorf("games unmarshal error: %w", err)
 	}
 
 	promoUrls := []string{}
@@ -100,19 +101,19 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 				return nil, fmt.Errorf("unknown Error")
 			}
 
-			req.Header.Add("accept", "application/json, text/plain, */*")
-			req.Header.Add("accept-language", "ja,en-US;q=0.9,en;q=0.8")
-			req.Header.Add("cache-control", "no-cache")
-			req.Header.Add("content-type", "application/json")
-			req.Header.Add("pragma", "no-cache")
-			req.Header.Add("priority", "u=1, i")
-			req.Header.Add("sec-ch-ua", "\"Chromium\";v=\""+generateRandomIntString(200)+"\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"")
-			req.Header.Add("sec-ch-ua-mobile", "?0")
-			req.Header.Add("sec-ch-ua-platform", "\"Windows\"")
-			req.Header.Add("sec-fetch-dest", "empty")
-			req.Header.Add("sec-fetch-mode", "cors")
-			req.Header.Add("sec-fetch-site", "same-origin")
-			req.Header.Add("referrer", "https://www.chess.com/play/computer/discord-wumpus?utm_source=chesscom&utm_medium=homepagebanner&utm_campaign=discord2024")
+			req.Header.Set("accept", "application/json, text/plain, */*")
+			req.Header.Set("accept-language", "ja,en-US;q=0.9,en;q=0.8")
+			req.Header.Set("cache-control", "no-cache")
+			req.Header.Set("content-type", "application/json")
+			req.Header.Set("pragma", "no-cache")
+			req.Header.Set("priority", "u=1, i")
+			req.Header.Set("sec-ch-ua", "\"Chromium\";v=\""+generateRandomIntString(200)+"\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"")
+			req.Header.Set("sec-ch-ua-mobile", "?0")
+			req.Header.Set("sec-ch-ua-platform", "\"Windows\"")
+			req.Header.Set("sec-fetch-dest", "empty")
+			req.Header.Set("sec-fetch-mode", "cors")
+			req.Header.Set("sec-fetch-site", "same-origin")
+			req.Header.Set("referrer", "https://www.chess.com/play/computer/discord-wumpus?utm_source=chesscom&utm_medium=homepagebanner&utm_campaign=discord2024")
 
 			resp, err = client.Do(req)
 			if err != nil {
@@ -143,5 +144,5 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 }
 
 func generateRandomIntString(max int) string {
-	return string(rand.Intn(max))
+	return strconv.Itoa(rand.Intn(max))
 }
