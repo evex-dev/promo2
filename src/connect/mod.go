@@ -44,15 +44,33 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 		Transport: transport,
 	}
 
+	headers := http.Header{}
+	headers.Add("accept", "application/json, text/plain, */*")
+	headers.Add("accept-language", "ja,en-US;q=0.9,en;q=0.8")
+	headers.Add("cache-control", "no-cache")
+	headers.Add("content-type", "application/json")
+	headers.Add("pragma", "no-cache")
+	headers.Add("priority", "u=1, i")
+	headers.Add("sec-ch-ua", "\"Chromium\";v=\""+generateRandomIntString(200)+"\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"")
+	headers.Add("sec-ch-ua-mobile", "?0")
+	headers.Add("sec-ch-ua-platform", "\"Windows\"")
+	headers.Add("sec-fetch-dest", "empty")
+	headers.Add("sec-fetch-mode", "cors")
+	headers.Add("sec-fetch-site", "same-origin")
+	headers.Add("referrer", "https://www.chess.com/play/computer/discord-wumpus?utm_source=chesscom&utm_medium=homepagebanner&utm_campaign=discord2024")
+
 	setupReq, err := http.NewRequest("GET", "https://www.chess.com/service/gamelist/top?limit=50&from=" + generateRandomIntString(1040), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect setupReqURL")
 	}
+
+	setupReq.Header = headers
+
 	resp, err := client.Do(setupReq)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect setupReqURL")
 	}
-	fmt.Println(resp.StatusCode)
+
 	defer resp.Body.Close()
 
 	payload, err := io.ReadAll(resp.Body)
@@ -84,20 +102,6 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 				return nil, fmt.Errorf("unknown Error")
 			}
 
-			headers := http.Header{}
-			headers.Add("accept", "application/json, text/plain, */*")
-			headers.Add("accept-language", "ja,en-US;q=0.9,en;q=0.8")
-			headers.Add("cache-control", "no-cache")
-			headers.Add("content-type", "application/json")
-			headers.Add("pragma", "no-cache")
-			headers.Add("priority", "u=1, i")
-			headers.Add("sec-ch-ua", "\"Chromium\";v=\""+generateRandomIntString(200)+"\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"")
-			headers.Add("sec-ch-ua-mobile", "?0")
-			headers.Add("sec-ch-ua-platform", "\"Windows\"")
-			headers.Add("sec-fetch-dest", "empty")
-			headers.Add("sec-fetch-mode", "cors")
-			headers.Add("sec-fetch-site", "same-origin")
-			headers.Add("referrer", "https://www.chess.com/play/computer/discord-wumpus?utm_source=chesscom&utm_medium=homepagebanner&utm_campaign=discord2024")
 			req.Header = headers
 
 			resp, err = client.Do(req)
