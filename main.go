@@ -65,7 +65,7 @@ func main() {
 			proxyUrl = proxylist[rand.Intn(len(proxylist))]
 		}
 
-		promos, err := connect.getPromoUrls(proxyUrl)
+		promos, err := connect.GetPromoUrls(proxyUrl)
 
 		if err != nil {
 			fmt.Println("\x1b[31m[-] Error: ", err, "\x1b[0m")
