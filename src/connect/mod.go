@@ -59,13 +59,13 @@ func GetPromoUrls(proxylist []string) ([]string, error) {
 
 	var wg sync.WaitGroup
 
+	fmt.Println("\x1b[33m[/] Fetching...")
+
 	for _, game := range games {
 		for _, user := range game.Players {
 			wg.Add(1)
 			go func(user Player) {
 				defer wg.Done()
-
-				fmt.Println("\x1b[34m[/] Fetching UUID: " + user.UUID + "\x1b[0m")
 
 				body, err := json.Marshal(RequestParms{
 					UserUUID:   user.UUID,

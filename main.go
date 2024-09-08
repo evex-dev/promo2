@@ -103,7 +103,7 @@ func main() {
 			}
 		}
 
-		thread := 1
+		thread := 25
 
 		for i := 0; i < thread; i++ {
 			wg.Add(1)
