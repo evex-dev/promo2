@@ -115,7 +115,7 @@ func GetPromoUrls(proxylist []string) ([]string, error) {
 				}
 
 				if promoResp.StatusCode != 200 {
-					fmt.Println("\x1b[31m[-] Fetching Error: " + strconv.Itoa(resp.StatusCode) + "\x1b[0m" + "Status: " + resp.Status)
+					fmt.Println("\x1b[31m[-] Fetching Error: " + strconv.Itoa(resp.StatusCode) + "\x1b[0m")
 
 					return
 				}

@@ -72,19 +72,13 @@ func main() {
 				return
 			}
 
-			fmt.Println("\x1b[32m[+] Found: ", len(promos), "urls\x1b[0m")
+			promosLength := len(promos)
+
+			fmt.Println("\x1b[32m[+] Found: ", promosLength, "urls\x1b[0m")
 
 			resultContent := strings.Join(promos, "\n")
-			resultFile, err := os.Create(resultPath)
 
-			if err != nil {
-				fmt.Println("\x1b[31m[-] Error: ", err, "\x1b[0m")
-				return
-			}
-
-			defer resultFile.Close()
-
-			if len(promos) != 0 {
+			if promosLength != 0 {
 				resultList, err := getResultFileContent(resultPath)
 
 				if err != nil {
@@ -92,8 +86,16 @@ func main() {
 					return
 				}
 
-				fmt.Println(len(resultList))
+				resultFile, err := os.Create(resultPath)
+
+				if err != nil {
+					fmt.Println("\x1b[31m[-] Error: ", err, "\x1b[0m")
+					return
+				}
+
 				resultFile.WriteString(resultList + "\n" + resultContent)
+
+				resultFile.Close()
 			}
 
 			for _, promo := range promos {
@@ -113,21 +115,14 @@ func main() {
 }
 
 func getResultFileContent(resultPath string) (string, error) {
-	resultBody, err := os.Open(resultPath)
-
-	if err != nil {
-		fmt.Println(err)
+	if _, err := os.Stat(resultPath); os.IsNotExist(err) {
 		return "", err
 	}
 
-	defer resultBody.Close()
+	content, err := os.ReadFile(resultPath)
+    if err != nil {
+        return "", err
+    }
 
-	resultScanner := bufio.NewScanner(resultBody)
-	var resultList []string
-	for resultScanner.Scan() {
-		text := resultScanner.Text()
-		resultList = append(resultList, text)
-	}
-
-	return strings.Join(resultList, "\n"), nil
+    return string(content), nil
 }
