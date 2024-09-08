@@ -32,17 +32,11 @@ func GetPromoUrls(proxyUrl string) ([]string, error) {
 		return nil, fmt.Errorf("invalid proxy URL: %s", err)
 	}
 
-	transport := http.DefaultTransport
-
-	if proxyUrl != "" {
-		transport = &http.Transport{
-			Proxy: http.ProxyURL(prxoyURL),
-		}
-	}
-
 	client := &http.Client{
 		Timeout:   time.Second * 10,
-		Transport: transport,
+		Transport: &http.Transport{
+			Proxy: http.ProxyURL(prxoyURL),
+		},
 	}
 
 	setupReq, err := http.NewRequest("GET", "https://www.chess.com/service/gamelist/top?limit=50&from=" + generateRandomIntString(1040), nil)

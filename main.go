@@ -105,12 +105,13 @@ func main() {
 			wg.Done()
 		}
 
-		wg.Add(5)
-		go oneGenerate()
-		go oneGenerate()
-		go oneGenerate()
-		go oneGenerate()
-		go oneGenerate()
+		thread := 50
+
+		wg.Add(thread)
+
+		for i := 0; i < thread; i++ {
+			go oneGenerate()
+		}
 
 		wg.Wait()
 	}
