@@ -60,6 +60,14 @@ func main() {
 	}
 
 	for {
+		resultFileContent, err := getResultFileContent(resultPath);
+		if err != nil {
+			fmt.Println("\x1b[31m[-] Error: ", err, "\x1b[0m")
+			return
+		}
+
+		promosList := strings.Split(resultFileContent, "\n");
+
 		oneGenerate := func() {
 			defer wg.Done()
 
@@ -76,16 +84,13 @@ func main() {
 
 			fmt.Println("\x1b[32m[+] Found: ", promosLength, "urls\x1b[0m")
 
-			resultContent := strings.Join(promos, "\n")
+			for _, promo := range promos {
+				fmt.Println("\x1b[32m[+] Found: ", promo, "\x1b[0m")
+			}
+
+			promosList = append(promosList, promos...)
 
 			if promosLength != 0 {
-				resultList, err := getResultFileContent(resultPath)
-
-				if err != nil {
-					fmt.Println("\x1b[31m[-] Error: ", err, "\x1b[0m")
-					return
-				}
-
 				resultFile, err := os.Create(resultPath)
 
 				if err != nil {
@@ -93,17 +98,13 @@ func main() {
 					return
 				}
 
-				resultFile.WriteString(resultList + "\n" + resultContent)
+				resultFile.WriteString(strings.Join(promosList, "\n"))
 
 				resultFile.Close()
 			}
-
-			for _, promo := range promos {
-				fmt.Println("\x1b[32m[+] Found: ", promo, "\x1b[0m")
-			}
 		}
 
-		thread := 25
+		thread := 30
 
 		for i := 0; i < thread; i++ {
 			wg.Add(1)

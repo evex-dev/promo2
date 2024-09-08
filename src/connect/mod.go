@@ -27,7 +27,7 @@ type Player struct {
 }
 
 func GetPromoUrls(proxylist []string) ([]string, error) {
-	client := &http.Client{
+	rawClient := &http.Client{
 		Timeout: time.Second * 10,
 	}
 
@@ -37,7 +37,7 @@ func GetPromoUrls(proxylist []string) ([]string, error) {
 		return nil, fmt.Errorf("failed to connect setupReqURL")
 	}
 
-	resp, err := client.Do(setupReq)
+	resp, err := rawClient.Do(setupReq)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect setupReqURL")
 	}
@@ -114,9 +114,8 @@ func GetPromoUrls(proxylist []string) ([]string, error) {
 					return
 				}
 
-				if promoResp.StatusCode != 200 {
-					fmt.Println("\x1b[31m[-] Fetching Error: " + strconv.Itoa(resp.StatusCode) + "\x1b[0m")
-
+				if promoResp.StatusCode != http.StatusOK {
+					fmt.Println("\x1b[31m[-] Fetching Error: " + strconv.Itoa(promoResp.StatusCode) + "\x1b[0m")
 					return
 				}
 
