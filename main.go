@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math/rand"
 	"os"
 	"strings"
 	"sync"
@@ -45,7 +44,8 @@ func main() {
 	scanner := bufio.NewScanner(proxiesBody)
 	var proxylist []string
 	for scanner.Scan() {
-		proxylist = append(proxylist, scanner.Text())
+		text := scanner.Text()
+		proxylist = append(proxylist, text)
 	}
 
 	resultPathPrompt := promptui.Prompt{
@@ -61,58 +61,73 @@ func main() {
 
 	for {
 		oneGenerate := func() {
+			defer wg.Done()
+
 			fmt.Println("\x1b[33m[=] Requesting...\x1b[0m")
 
-			proxyUrl := ""
-
-			if len(proxylist) > 0 {
-				proxyUrl = proxylist[rand.Intn(len(proxylist))]
-			}
-
-			fmt.Println("\x1b[35m[~] Proxy: ", proxyUrl, "\x1b[0m")
-
-			promos, err := connect.GetPromoUrls(proxyUrl)
+			promos, err := connect.GetPromoUrls(proxylist)
 
 			if err != nil {
 				fmt.Println("\x1b[31m[-] Error: ", err, "\x1b[0m")
-				wg.Done()
 				return
 			}
 
 			fmt.Println("\x1b[32m[+] Found: ", len(promos), "urls\x1b[0m")
 
 			resultContent := strings.Join(promos, "\n")
-			resultFile, err := os.Open(resultPath)
+			resultFile, err := os.Create(resultPath)
 
 			if err != nil {
 				fmt.Println("\x1b[31m[-] Error: ", err, "\x1b[0m")
-				wg.Done()
 				return
 			}
 
-			scanner := bufio.NewScanner(resultFile)
-			var resultlist []string
-			for scanner.Scan() {
-				resultlist = append(resultlist, scanner.Text())
-			}
+			defer resultFile.Close()
 
-			resultFile.WriteString(fmt.Sprintf("%s\n%s", strings.Join(resultlist, "\n"), resultContent))
+			if len(promos) != 0 {
+				resultList, err := getResultFileContent(resultPath)
+
+				if err != nil {
+					fmt.Println("\x1b[31m[-] Error: ", err, "\x1b[0m")
+					return
+				}
+
+				fmt.Println(len(resultList))
+				resultFile.WriteString(resultList + "\n" + resultContent)
+			}
 
 			for _, promo := range promos {
 				fmt.Println("\x1b[32m[+] Found: ", promo, "\x1b[0m")
 			}
-
-			wg.Done()
 		}
 
-		thread := 50
-
-		wg.Add(thread)
+		thread := 1
 
 		for i := 0; i < thread; i++ {
+			wg.Add(1)
 			go oneGenerate()
 		}
 
 		wg.Wait()
 	}
+}
+
+func getResultFileContent(resultPath string) (string, error) {
+	resultBody, err := os.Open(resultPath)
+
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+
+	defer resultBody.Close()
+
+	resultScanner := bufio.NewScanner(resultBody)
+	var resultList []string
+	for resultScanner.Scan() {
+		text := resultScanner.Text()
+		resultList = append(resultList, text)
+	}
+
+	return strings.Join(resultList, "\n"), nil
 }
